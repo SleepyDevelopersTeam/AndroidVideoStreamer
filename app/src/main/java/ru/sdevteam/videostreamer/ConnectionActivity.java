@@ -1,7 +1,8 @@
 package ru.sdevteam.videostreamer;
 
-import android.support.v7.app.AppCompatActivity;
+import android.content.Intent;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -51,5 +52,8 @@ public class ConnectionActivity extends AppCompatActivity
 			System.out.println("Error: " + e.getMessage());
 			error.setText("Error: " + e.getMessage());
 		}
+
+		Intent intent = new Intent(this, CameraActivity.class);
+		startActivity(intent);
 	}
 }
