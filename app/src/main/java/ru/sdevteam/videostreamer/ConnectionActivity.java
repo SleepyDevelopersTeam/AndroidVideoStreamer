@@ -9,9 +9,6 @@ import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
-import java.net.InetAddress;
-import java.net.UnknownHostException;
-
 public class ConnectionActivity extends AppCompatActivity
 {
 
@@ -33,24 +30,26 @@ public class ConnectionActivity extends AppCompatActivity
 
 	private void connect()
 	{
-		EditText address = (EditText) findViewById(R.id.addressTextBox);
+		EditText addressBox = (EditText) findViewById(R.id.addressTextBox);
+		EditText portBox = (EditText) findViewById(R.id.portTextBox);
 		TextView error = (TextView) findViewById(R.id.errorLabel);
 		ProgressBar bar = (ProgressBar) findViewById(R.id.connectionProgressBar);
 		bar.setVisibility(View.VISIBLE);
 		try
 		{
-			InetAddress ip = InetAddress.getByName(address.getText().toString());
-		}
-		catch (UnknownHostException e)
-		{
-			System.out.println("Error: " + e.getMessage());
-			e.printStackTrace();
-			error.setText("Error: " + e.getMessage());
+			String host = addressBox.getText().toString();
+			int port = Integer.parseInt(portBox.getText().toString());
+
+
+			NetThread.init(host, port);
 		}
 		catch (Exception e)
 		{
 			System.out.println("Error: " + e.getMessage());
+			e.printStackTrace();
 			error.setText("Error: " + e.getMessage());
+			bar.setVisibility(View.INVISIBLE);
+			System.exit(0);
 		}
 
 		Intent intent = new Intent(this, CameraActivity.class);

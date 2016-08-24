@@ -122,7 +122,15 @@ public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback
 	@Override
 	public void onPreviewFrame(byte[] bytes, Camera camera)
 	{
-		//System.out.println("Length: " + bytes.length);
+		try
+		{
+			NetThread.out().writeUTF("Length: " + bytes.length);
+		}
+		catch (IOException ex)
+		{
+			System.out.println("[ERROR] " + ex.getMessage());
+			ex.printStackTrace();
+		}
 		// TODO: bytes is our image we need to send, do it here
 		// something like
 		// ServerSocket.getInstance().writeAllTheStuffAndSend(bytes);

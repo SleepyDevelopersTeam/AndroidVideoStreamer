@@ -19,18 +19,18 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/addressTextBox" android:layout_below="@+id/enterAddressLabel" android:layout_alignParentLeft="true"
-            android:layout_alignParentStart="true" android:layout_alignParentRight="true"
-            android:layout_alignParentEnd="true" android:inputType="textNoSuggestions|number|textUri|time|numberDecimal"
-            android:hint="192.168.1.100:8077" android:textSize="25dp"/>
+            android:layout_alignParentStart="true"
+            android:inputType="number|textNoSuggestions|numberDecimal"
+            android:hint="192.168.1.104" android:textSize="25dp" android:layout_alignParentRight="true"
+            android:layout_alignParentEnd="true"/>
     <Button
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Connect"
             android:id="@+id/connectButton"
-            android:layout_below="@+id/addressTextBox" android:layout_alignParentLeft="true"
-            android:layout_alignParentStart="true" android:layout_alignRight="@+id/addressTextBox"
-            android:layout_alignEnd="@+id/addressTextBox" android:textSize="20dp" android:textStyle="normal"
-            android:paddingTop="20dp" android:paddingBottom="20dp"/>
+            android:textSize="20dp" android:textStyle="normal"
+            android:paddingTop="20dp" android:paddingBottom="20dp"
+            android:layout_above="@+id/errorLabel" android:layout_centerHorizontal="true"/>
     <ProgressBar
             style="?android:attr/progressBarStyleLarge"
             android:layout_width="wrap_content"
@@ -42,8 +42,23 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/errorLabel"
-            android:textSize="15dp" android:layout_alignRight="@+id/connectButton"
-            android:layout_alignEnd="@+id/connectButton" android:layout_alignParentBottom="true"
+            android:textSize="15dp"
+            android:layout_alignParentBottom="true"
             android:layout_alignParentLeft="true" android:layout_alignParentStart="true"
-            android:textAlignment="center" android:maxLines="5" android:textColor="#ff4040" android:text="..."/>
+            android:textAlignment="center" android:maxLines="5" android:textColor="#ff4040" android:text="..."
+            android:layout_alignParentRight="true" android:layout_alignParentEnd="true"/>
+    <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Enter server port:"
+            android:id="@+id/textView"
+            android:layout_below="@+id/addressTextBox" android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true" android:textSize="20dp"/>
+    <EditText
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/portTextBox" android:layout_below="@+id/textView" android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true" android:layout_alignRight="@+id/addressTextBox"
+            android:layout_alignEnd="@+id/addressTextBox" android:textSize="25dp" android:hint="9090"
+            android:inputType="number"/>
 </RelativeLayout>
