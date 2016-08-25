@@ -38,24 +38,24 @@ This type of command can be sent only from client side.
 ### Communication ###
 
 1. Handshaking:
-  1. **Client** (who starts the connection) sends **"Hello server"** message (`0xEE`).
-  2. **Server** sends **"Hello client"** message (`0xAA`).
+  1. **Client** (who starts the connection) sends **"Hello server"** message (`0x1E`).
+  2. **Server** sends **"Hello client"** message (`0x1A`).
   3. **Client** sends `4` bytes that represent **data command** data length (_without_ considering `0x00` byte!).
 
 2. After handshaking, data exchange starts:
   1. **Client** sends **data command**.
-  2. **Server** sends **"Data received"** (`0xDA`) message.
+  2. **Server** sends **"Data received"** (`0x2D`) message.
   3. Can be repeated till the end of days.
 
 3. If **client** answers with not a **data command** (first byte is not zero), it is a **control command**:
   3. **Client** sends a command (see list above).
-  3. **Server** executes the command and sends **"Command executed"** message (`0xCE`) if succeeded.
+  3. **Server** executes the command and sends **"Command executed"** message (`0x3E`) if succeeded.
   3. **Server** sends error message (`0x66`) if some error has occured while executing the command. Communication **SHOULD NOT** stop in this case.
 
 4. Closing the connection:
   4. **Client** is *always* the initiator of closing the connection.
-  4. **Client** sends **"Goodbye server"** message (`0x95`).
-  4. **Server** sends **"Goodbye client"** message (`0x9C`).
+  4. **Client** sends **"Goodbye server"** message (`0x45`).
+  4. **Server** sends **"Goodbye client"** message (`0x4C`).
   4. **Server** closes the connection (socket).
 
 5. Error handling:
