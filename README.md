@@ -10,21 +10,21 @@ Here is its specification:
 
 Server and client exchange with raw binary data (not strings!).
 Commands may be of 2 types: **control command** and **data command**.
-**Control command** is one single byte of data with following values:
+**Control command** is one single byte of data with following values (**INPORTANT!** Following constants are of type signed byte, `sbyte`, `char` in C++ or `byte` in Java):
 
 (**client** can send following commands):
 
-- `0xEE`: **"Hello server"** message;
-- `0x1E`: client is to change **data command** length (*unused now*) (**IMPORTANT!** This command is followed with 4 bytes of length!);
-- `0xF0`: **"Fone reset"** command;
-- `0x95`: **"Goodbye server"** message;
+- `0x1E`: **"Hello server"** message;
+- `0x31`: client is to change **data command** length (*unused now*) (**IMPORTANT!** This command is followed with 4 bytes of length!);
+- `0x3F`: **"Fone reset"** command;
+- `0x45`: **"Goodbye server"** message;
 
 (**server** can send following commands):
 
-- `0xAA`: **"Hello client"** message;
-- `0xDA`: **"Data received"** server response;
-- `0xCE`: **"Command executed"** message;
-- `0x9C`: **"Goodbye client"** message;
+- `0x1A`: **"Hello client"** message;
+- `0x2D`: **"Data received"** server response;
+- `0x3E`: **"Command executed"** message;
+- `0x4C`: **"Goodbye client"** message;
 
 (both **server** and **client** can send following commands):
 
