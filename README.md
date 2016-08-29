@@ -69,6 +69,6 @@ See more in part __Data Format__
 
 ### Data Format ###
 
-Image is sent as raw byte sequence in format `YUV NV_21`. For an appropriate conversion from it to `RGB`, see [this class](https://github.com/SleepyDevelopersTeam/SimpleJavaServer/blob/master/src/Server.java) (the last method in the file).
+Image is sent as raw byte sequence in format `YUV NV_21`. For an appropriate conversion from it to `RGB`, see [this class](https://github.com/SleepyDevelopersTeam/SimpleJavaServer/blob/master/src/VideoFrame.java) (the last method in the file).
 
 Raw image data follows 4 bytes representing image `width` and `height`, 2 bytes per value. They are stored as signed short integers (`short` in Java).
