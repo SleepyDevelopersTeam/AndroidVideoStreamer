@@ -33,7 +33,9 @@ Commands may be of 2 types: **control command** and **data command**.
 
 **Data command** is a bulk array of image data bytes, following the single byte with value `0x00`
 (to differ **data command** from **control command**).
+First 2 bytes of this array represent image width (as a Java `short` variable), and second ones represent image height.
 This type of command can be sent only from client side.
+See more in part __Data Format__
 
 ### Communication ###
 
@@ -67,4 +69,6 @@ This type of command can be sent only from client side.
 
 ### Data Format ###
 
-Image is sent as raw byte sequence in format `RGB_565`.
+Image is sent as raw byte sequence in format `YUV NV_21`. For an appropriate conversion from it to `RGB`, see [this class](https://github.com/SleepyDevelopersTeam/SimpleJavaServer/blob/master/src/Server.java) (the last method in the file).
+
+Raw image data follows 4 bytes representing image `width` and `height`, 2 bytes per value. They are stored as signed short integers (`short` in Java).
