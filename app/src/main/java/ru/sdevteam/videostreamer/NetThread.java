@@ -162,11 +162,14 @@ public class NetThread implements Runnable
 			}
 
 			// everything below in this method should implement SDTUDTP3K!
+			// TODO: update protocol specification to hold width and height
 
 			_out.writeByte(deferredCommand);
 			switch (deferredCommand)
 			{
 				case DATA:
+					_out.writeShort(imgW);
+					_out.writeShort(imgH);
 					synchronized (data) // data reference won't change because we're inside synchronized(mutex)
 					{
 						_out.write(data);
@@ -263,15 +266,18 @@ public class NetThread implements Runnable
 	private volatile boolean deferred, handshakeLengthDeferred;
 	private volatile byte[] data;
 	private volatile int deferredLength;
+	private volatile short imgW, imgH;
 	private final Object mutex = new Object();
 
 	private void deferCommand(byte cmd)
 	{
+		// TODO: try while(this.deferred) mutex.wait();
 		synchronized (mutex)
 		{
 			if (this.deferred)
 			{
 				System.out.println("[ERROR] Commands are too fast!");
+				//mutex.notifyAll();
 				return;
 			}
 			deferred = true;
@@ -286,6 +292,7 @@ public class NetThread implements Runnable
 			if (this.deferred)
 			{
 				System.out.println("[ERROR] Commands are too fast!");
+				//mutex.notifyAll();
 				return;
 			}
 			deferred = true;
@@ -294,28 +301,31 @@ public class NetThread implements Runnable
 			mutex.notifyAll();
 		}
 	}
-	private void deferData(byte[] data)
+	private void deferData(short w, short h, byte[] data)
 	{
 		synchronized (mutex)
 		{
 			if (this.deferred)
 			{
 				System.out.println("[ERROR] Commands are too fast!");
+				//mutex.notifyAll();
 				return;
 			}
 			deferred = true;
 			this.data = data;
+			imgW = w; imgH = h;
 			deferredCommand = DATA;
 			mutex.notifyAll();
 		}
 	}
-	private void deferHanshakeLength(int dataLen)
+	private void deferHandshakeLength(int dataLen)
 	{
 		synchronized (mutex)
 		{
 			if (this.deferred)
 			{
 				System.out.println("[ERROR] Commands are too fast!");
+				//mutex.notifyAll();
 				return;
 			}
 			deferred = true;
@@ -335,7 +345,7 @@ public class NetThread implements Runnable
 
 	public void endHandshake(int dataLen)
 	{
-		deferHanshakeLength(dataLen);
+		deferHandshakeLength(dataLen);
 	}
 
 	public void closeConnection()
@@ -358,9 +368,9 @@ public class NetThread implements Runnable
 		deferCommand(ERROR);
 	}
 
-	public void sendData(byte[] data)
+	public void sendData(short w, short h, byte[] data)
 	{
-		deferData(data);
+		deferData(w, h, data);
 	}
 
 }

@@ -1,12 +1,14 @@
 package ru.sdevteam.videostreamer;
 
 import android.content.Context;
+import android.graphics.ImageFormat;
 import android.hardware.Camera;
 import android.util.AttributeSet;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 
 import java.io.IOException;
+import java.util.List;
 
 /**
  * Created by user on 23.08.2016.
@@ -17,8 +19,11 @@ public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback
 	SurfaceHolder holder;
 	Camera camera;
 	int dataLen;
+	Camera.Size previewSize;
 
 	public boolean isOpen;
+
+	private final int maxPreviewSize = 600*450;
 
 	public CameraPreview(Context ctx, AttributeSet whoFuckingCares)
 	{
@@ -46,19 +51,25 @@ public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback
 		}
 	}
 
+	private void initCameraPreview() throws IOException
+	{
+		camera.setPreviewDisplay(holder);
+		camera.setPreviewCallback(this);
+		choosePreviewSize(maxPreviewSize);
+		Camera.Parameters params = camera.getParameters();
+		params.setPreviewFormat(ImageFormat.NV21);
+		params.setPreviewSize(previewSize.width, previewSize.height);
+		camera.setParameters(params);
+		camera.startPreview();
+	}
+
 	@Override
 	public void surfaceCreated(SurfaceHolder surfaceHolder)
 	{
 		System.out.println("[EVENT] Surface created");
 		try
 		{
-			camera.setPreviewDisplay(holder);
-			camera.setPreviewCallback(this);
-			// unsupported
-			//Camera.Parameters params = camera.getParameters();
-			//params.setPreviewFormat(ImageFormat.RGB_565);
-			//camera.setParameters(params);
-			camera.startPreview();
+			initCameraPreview();
 		}
 		catch (IOException ioex)
 		{
@@ -70,15 +81,19 @@ public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback
 	public void surfaceChanged(SurfaceHolder surfaceHolder, int i, int i1, int i2)
 	{
 		System.out.println("[EVENT] Surface changed");
-		if (holder.getSurface() == null){
+		if (holder.getSurface() == null)
+		{
 			// preview surface does not exist
 			return;
 		}
 
 		// stop preview before making changes
-		try {
+		try
+		{
 			camera.stopPreview();
-		} catch (Exception e){
+		}
+		catch (Exception e)
+		{
 			// ignore: tried to stop a non-existent preview
 			System.out.println("[CRITICAL] Camera can't stop preview");
 		}
@@ -87,12 +102,12 @@ public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback
 		// reformatting changes here
 
 		// start preview with new settings
-		try {
-			camera.setPreviewDisplay(holder);
-			camera.setPreviewCallback(this);
-			camera.startPreview();
-
-		} catch (Exception e){
+		try
+		{
+			initCameraPreview();
+		}
+		catch (Exception e)
+		{
 			System.out.println("[CRITICAL] Error starting camera preview: " + e.getMessage());
 		}
 	}
@@ -133,22 +148,43 @@ public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback
 	{
 		if (dataLen == 0)
 		{
-//			dataLen = 90000;
-//			isOpen = true;
+			dataLen = bytes.length;
+			isOpen = true;
 //			testData = new byte[dataLen];
 //			for (int i = 0; i < testData.length; i++)
 //			{
 //				testData[i] = (byte) (i % 10);
 //			}
-//			NetThread.getInstance().endHandshake(dataLen);
-			dataLen = bytes.length;
-			isOpen = true;
 			NetThread.getInstance().endHandshake(dataLen);
 		}
 		else if (isOpen)
 		{
 //			NetThread.getInstance().sendData(testData);
-			NetThread.getInstance().sendData(bytes);
+			short w = (short) previewSize.width, h = (short) previewSize.height;
+			NetThread.getInstance().sendData(w, h, bytes);
 		}
+	}
+
+	private void choosePreviewSize(int maxPixels)
+	{
+		List<Camera.Size> sizes = camera.getParameters().getSupportedPreviewSizes();
+		int best = 0;
+		for (int i = 0; i < sizes.size(); i++)
+		{
+			Camera.Size sz = sizes.get(i);
+			int pixels = sz.width * sz.height;
+			if (pixels > best && pixels < maxPixels)
+			{
+				previewSize = sz;
+				best = pixels;
+			}
+
+		}
+		if (best == 0)
+		{
+			System.out.println("[CRITICAL] No suitable preview size found!");
+			System.exit(0);
+		}
+		else System.out.println("[INFO] Selected size " + previewSize.width + "x" + previewSize.height);
 	}
 }
