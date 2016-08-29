@@ -28,6 +28,14 @@ public class ConnectionActivity extends AppCompatActivity
 		});
 	}
 
+	@Override
+	protected void onResume()
+	{
+		super.onResume();
+		ProgressBar bar = (ProgressBar) findViewById(R.id.connectionProgressBar);
+		bar.setVisibility(View.INVISIBLE);
+	}
+
 	private void connect()
 	{
 		EditText addressBox = (EditText) findViewById(R.id.addressTextBox);
@@ -42,6 +50,8 @@ public class ConnectionActivity extends AppCompatActivity
 
 
 			NetThread.init(host, port);
+
+			NetThread.getInstance().startHandshake();
 		}
 		catch (Exception e)
 		{

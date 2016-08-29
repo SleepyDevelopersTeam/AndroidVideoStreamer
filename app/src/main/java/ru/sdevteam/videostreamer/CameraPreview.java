@@ -2,13 +2,11 @@ package ru.sdevteam.videostreamer;
 
 import android.content.Context;
 import android.hardware.Camera;
-import android.hardware.Camera.Size;
 import android.util.AttributeSet;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 
 import java.io.IOException;
-import java.util.List;
 
 /**
  * Created by user on 23.08.2016.
@@ -18,11 +16,16 @@ public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback
 	//SurfaceView surface;
 	SurfaceHolder holder;
 	Camera camera;
-	List<Size> sizes;
+	int dataLen;
+
+	public boolean isOpen;
 
 	public CameraPreview(Context ctx, AttributeSet whoFuckingCares)
 	{
 		super(ctx);
+
+		dataLen = 0;
+		isOpen = false;
 
 		//surface = new SurfaceView(ctx);
 		//addView(surface);
@@ -51,6 +54,10 @@ public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback
 		{
 			camera.setPreviewDisplay(holder);
 			camera.setPreviewCallback(this);
+			// unsupported
+			//Camera.Parameters params = camera.getParameters();
+			//params.setPreviewFormat(ImageFormat.RGB_565);
+			//camera.setParameters(params);
 			camera.startPreview();
 		}
 		catch (IOException ioex)
@@ -119,20 +126,29 @@ public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback
 
 	}
 
+	private byte[] testData;
+
 	@Override
 	public void onPreviewFrame(byte[] bytes, Camera camera)
 	{
-		try
+		if (dataLen == 0)
 		{
-			NetThread.out().writeUTF("Length: " + bytes.length);
+//			dataLen = 90000;
+//			isOpen = true;
+//			testData = new byte[dataLen];
+//			for (int i = 0; i < testData.length; i++)
+//			{
+//				testData[i] = (byte) (i % 10);
+//			}
+//			NetThread.getInstance().endHandshake(dataLen);
+			dataLen = bytes.length;
+			isOpen = true;
+			NetThread.getInstance().endHandshake(dataLen);
 		}
-		catch (IOException ex)
+		else if (isOpen)
 		{
-			System.out.println("[ERROR] " + ex.getMessage());
-			ex.printStackTrace();
+//			NetThread.getInstance().sendData(testData);
+			NetThread.getInstance().sendData(bytes);
 		}
-		// TODO: bytes is our image we need to send, do it here
-		// something like
-		// ServerSocket.getInstance().writeAllTheStuffAndSend(bytes);
 	}
 }
