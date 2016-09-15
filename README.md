@@ -15,7 +15,7 @@ Commands may be of 2 types: **control command** and **data command**.
 (**client** can send following commands):
 
 - `0x1E`: **"Hello server"** message;
-- `0x31`: client is to change **data command** length (*unused now*) (**IMPORTANT!** This command is followed with 4 bytes of length!);
+- `0x31`: client is to change **data command** length (**IMPORTANT!** This command is followed with 4 bytes of length!);
 - `0x3F`: **"Fone reset"** command;
 - `0x45`: **"Goodbye server"** message;
 
@@ -43,6 +43,8 @@ See more in part __Data Format__
   1. **Client** (who starts the connection) sends **"Hello server"** message (`0x1E`).
   2. **Server** sends **"Hello client"** message (`0x1A`).
   3. **Client** sends `4` bytes that represent **data command** data length (_without_ considering `0x00` byte!).
+
+*NOTICE:* there is a SDTUDTP3Km version of protocol, which does not includes data sending into handshake, but the first command after handshake is always **length change** command (`0x31`), that is followed with 4 bytes of value of new data length.
 
 2. After handshaking, data exchange starts:
   1. **Client** sends **data command**.
